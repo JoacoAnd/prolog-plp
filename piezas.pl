@@ -66,7 +66,7 @@ buildF([o|TF], I, [_|T]) :-
 
 mostrar(M) :-
 	strM(M, S),
-	writef(S).
+	write(S).
 
 ansiColor(black, '\x1B[30m').
 ansiColor(red, '\x1B[31m').
