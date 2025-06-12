@@ -14,7 +14,7 @@ tamanio(Matriz, Filas, Columnas) :- length(Matriz, Filas), member(Fila, Matriz),
 
 % 4- coordenadas(+T, -IJ)
 
-coordenadas(T, (I, J)) :- tamanio(T, Filas, Columnas), between(1, Filas, I), between(1, Columnas, J).
+coordenadas(T, (I,J)) :- nth1(I, T, Fila), nth1(J, Fila, _).
 
 % 5- kPiezas(+K, -PS)
 
@@ -26,4 +26,16 @@ generarLista(K, Piezas, [P | PS]) :- K > 0, elegirPieza(Piezas, P, RestoPiezas),
 
 kPiezas(K, PS) :- nombrePiezas(Piezas), generarLista(K, Piezas, PS).
 
-% 6-
+% 6- seccionTablero(+T, +ALTO, +ANCHO, +IJ, ?ST)
+
+recortarEnAnchura([], _, _, []).
+recortarEnAnchura([A|SA], ANCHO, J, [S|ST]) :- J1 is J - 1, sublista(J1, ANCHO, A, S), recortarEnAnchura(SA, ANCHO, J, ST).
+seccionTablero(T, ALTO, ANCHO, (I, J), ST) :- I1 is I - 1, sublista(I1, ALTO, T, STAltura), recortarEnAnchura(STAltura, ANCHO, J, ST).
+
+% 7- ubicarPieza(+Tablero, +Identificador)
+
+ubicarPieza(Tablero, Identificador) :- 
+    pieza(Identificador, Pieza), 
+    tamanio(Pieza, ALTO, ANCHO), 
+    coordenadas(Tablero, IJ),
+    seccionTablero(Tablero, ALTO, ANCHO, IJ, Pieza).
