@@ -1,19 +1,28 @@
 :- use_module(piezas).
 
 % 1- sublista(+Descartar, +Tomar, +L, -R)
-
+% Separamos la lista en DL y RyAlgoMas. DL seran los elementos a descartar, por lo que declaramos que esa sea
+% su longitud. Luego separamos RyAlgoMas en R y otro termino que no nos interesa. R tendra longitud Tomar,
+% que son la cantidad de elementos que nos interesa quedarnos.
 sublista(Descartar, Tomar, L, R) :- append(DL, RyAlgoMas, L), length(DL, Descartar), append(R, _, RyAlgoMas), length(R, Tomar).
 
 % 2- tablero(+K, -T)
+% Declaramos que T tiene 5 filas porque asi se indica en la consigna. Luego usamos maplist para que cada elemento de T
+% satisfaga el goal Fila: este sera verdadero cuando la longitud de la fila sea igual a K. Pasamos entonces Fila(K)
+% para rellenar el tablero con K columnas.
 
 fila(K, Fila) :- length(Fila, K).
 tablero(K, T) :- K > 0, length(T, 5), maplist(fila(K), T).
 
 % 3- tamaño(+M, -F, -C)
+% Filas sera la longitud de la matriz y columnas la longitud de la primera fila 
+% (Asumimos que todas las filas tienen igual longitud al ser una matriz). 
 
 tamanio([M|MS], Filas, Columnas) :- length([M|MS], Filas), length(M, Columnas).
 
 % 4- coordenadas(+T, -IJ)
+% Usamos nth1 porque nos permite acceder a cada uno de los elementos de una lista segun su indice.
+% El indice I en el tablero sera la Fila. Y con el indice J en cada Fila nos dara la coordenada.
 
 coordenadas(T, (I,J)) :- nth1(I, T, Fila), nth1(J, Fila, _).
 
@@ -28,9 +37,13 @@ generarLista(K, Piezas, [P | PS]) :- K > 0, elegirPieza(Piezas, P, RestoPiezas),
 kPiezas(K, PS) :- nombrePiezas(Piezas), generarLista(K, Piezas, PS).
 
 % 6- seccionTablero(+T, +ALTO, +ANCHO, +IJ, ?ST)
-
+% Usando el predicado sublista, recortarEnAnchura se queda con el ancho requerido a partir de la coordenada J
+% de cada lista de la matriz.
 recortarEnAnchura([], _, _, []).
 recortarEnAnchura([A|SA], ANCHO, J, [S|ST]) :- J1 is J - 1, sublista(J1, ANCHO, A, S), recortarEnAnchura(SA, ANCHO, J, ST).
+
+% Usamos el predicado sublista para quedarnos con un tablero con la altura requerida a partir de la coordenada I. Luego usamos
+% recortarEnAnchura para, de ese tablero recortado, quedarnos con la anchura requerida a partir de la coordenada J. 
 seccionTablero(T, ALTO, ANCHO, (I, J), ST) :- I1 is I - 1, sublista(I1, ALTO, T, STAltura), recortarEnAnchura(STAltura, ANCHO, J, ST).
 
 % 7- ubicarPieza(+Tablero, +Identificador)
