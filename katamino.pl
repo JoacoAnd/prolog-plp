@@ -13,16 +13,16 @@ sublista(Descartar, Tomar, L, R) :- append(DL, RyAlgoMas, L), length(DL, Descart
 % 4) el evaluar length(R, Tomar), con R ya instanciado, podemos obtener Tomar.
 %
 % Aqui algunos ejemplos de como se evalua sublista:
-% a) Modo sublista(-D, +T, +L, -R): genera todas las sublistas de longitud T con su desplazamiento D en L.
+% a) Modo sublista(-D, +T, +L, -R):
 %    ?- sublista(D, 2, [a,b,c,d], R).
 %    D = 0, R = [a,b] ;
 %    D = 1, R = [b,c] ;
 %    D = 2, R = [c,d] ;
 %    false.
-% b) Modo sublista(+D, +T, +L, -R): fija D y T, genera R.
+% b) Modo sublista(+D, +T, +L, -R):
 %    ?- sublista(1, 2, [a,b,c,d], R).
 %    R = [b,c].
-% c) Modo sublista(-D, +T, +L, +R): fija R y T, genera el D que lo produce.
+% c) Modo sublista(-D, +T, +L, +R):
 %    ?- sublista(D, 2, [a,b,c,d], [c,d]).
 %    D = 2.
 
