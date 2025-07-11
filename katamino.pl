@@ -6,25 +6,8 @@
 % que son la cantidad de elementos que nos interesa quedarnos.
 sublista(Descartar, Tomar, L, R) :- length(DL, Descartar), length(R, Tomar), append(DL, RyAlgoMas, L),  append(R, _, RyAlgoMas). 
 % 12- evaluamos la reversibilidad de sublista
-% Como append es reversible, y length es reversible, y sublista es una combinación de append y length, sublista es reversible.
-% 1) al evaluar append(DL, RyAlgoMas, L) obtenemos DL y RyAlgoMas.
-% 2) al evaluar length(DL, Descartar), con DL ya instanciado, podemos obtener Descartar.
-% 3) al evaluar append(R, _, RyAlgoMas) con RyAlgoMas ya instanciado, obtenemos R.
-% 4) al evaluar length(R, Tomar), con R ya instanciado, podemos obtener Tomar.
-%
-% Aquí algunos ejemplos de cómo se evalúa sublista:
-% a) Modo sublista(-D, +T, +L, -R):
-%    ?- sublista(D, 2, [a,b,c,d], R).
-%    D = 0, R = [a,b] ;
-%    D = 1, R = [b,c] ;
-%    D = 2, R = [c,d] ;
-%    false.
-% b) Modo sublista(+D, +T, +L, -R):
-%    ?- sublista(1, 2, [a,b,c,d], R).
-%    R = [b,c].
-% c) Modo sublista(-D, +T, +L, +R):
-%    ?- sublista(D, 2, [a,b,c,d], [c,d]).
-%    D = 2.
+% No es reversible ya que el predicado puede generar infinitas soluciones.
+
 
 % 2- tablero(+K, -T)
 % Declaramos que T tiene 5 filas porque así se indica en la consigna. Luego usamos maplist para que cada elemento de T
