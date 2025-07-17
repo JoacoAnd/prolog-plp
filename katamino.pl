@@ -4,10 +4,37 @@
 % Separamos la lista en DL y RyAlgoMas. DL serán los elementos a descartar, por lo que declaramos que esa sea
 % su longitud. Luego separamos RyAlgoMas en R y otro término que no nos interesa. R tendrá longitud Tomar,
 % que son la cantidad de elementos que nos interesa quedarnos.
-sublista(Descartar, Tomar, L, R) :- length(DL, Descartar), length(R, Tomar), append(DL, RyAlgoMas, L),  append(R, _, RyAlgoMas). 
-% 12- evaluamos la reversibilidad de sublista
-% No es reversible ya que el predicado puede generar infinitas soluciones.
+sublista(Descartar, Tomar, L, R) :- length(DL, Descartar), length(R, Tomar), append(DL, RyAlgoMas, L), append(R, _, RyAlgoMas). 
+% 12- Reversibilidad
+% No es reversible ya que el predicado se cuelga.
+% - Cuando ejecutamos length(DL, Descartar), al no estar instanciado Descartar, DL se va a instanciar con todas las listas genericas 
+% de tamanio N tal que N >= 0, y tambien se instanciara en cada caso a Descartar como N. 
+% - Luego verifica length(R, Tomar). En caso de que no se cumpla, pasamos a la siguiente instanciacion de DL y Descartar.
+% Como R y Tomar estan instanciadas, esta consulta si falla lo hara para cualquier instanciacion de DL y Descartar. Prolog
+% intentara encontrar alguna que si lo cumpla (nunca llegara este caso) hasta que se cuelga.
+% - Si se cumple el caso anterior verifica ahora append(DL, RyAlgoMas, L). Aca pueden ocurrir dos casos:
+%   1. Si Descartar es mayor al tamanio de L entonces la consulta devuelve false, ya que no existe ninguna lista tal que 
+%   al concatenarla con DL resulte L. En ese caso seguira con las consultas infinitas ya explicadas y el programa se cuelga. 
+%   2. Descartar es menor o igual al tamanio de L, por lo que RyAlgoMas se instancia como un sufijo de L sin los primeros Descartar elementos.
+% - Por ultimo verifica append(R, _, RyAlgoMas), es decir, R es prefijo de RyAlgoMas. Esto es verdadero en una cantidad finita de instanciaciones de DL
+% que ocurre cuando simultaneamente Descartar se instancia como una solucion correcta y la devuelve. Esta cantidad de soluciones sera igual
+% a las veces que R ocurre en L. Sin embargo, el predicado sigue buscando soluciones (que seran siempre incorrectas) hasta que el predicado se cuelgue.
 
+% 12 - Reversibilidad
+% No es reversible ya que el predicado se cuelga.
+% - Cuando ejecutamos length(DL, Descartar), al no estar instanciado Descartar, DL se instanciará con todas las listas genéricas 
+%   de tamaño N tal que N >= 0, y también se instanciará en cada caso Descartar como N. 
+% - Luego se verifica length(R, Tomar). En caso de que no se cumpla, se pasa a la siguiente instanciación de DL y Descartar.
+%   Como R y Tomar están instanciados, si esta verificación falla lo hará para cualquier instanciación de DL y Descartar. 
+%   Prolog intentará encontrar alguna que sí lo cumpla (lo cual nunca ocurrirá), por lo que se cuelga.
+% - Si se cumple el caso anterior, se verifica ahora append(DL, RyAlgoMas, L). Acá pueden ocurrir dos casos:
+%   1. Si Descartar es mayor al tamaño de L, entonces la consulta devuelve false, ya que no existe ninguna lista tal que, 
+%      al concatenarla con DL, resulte L. En ese caso, continuará con las consultas infinitas ya explicadas, y el programa se cuelga.
+%   2. Si Descartar es menor o igual al tamaño de L, entonces RyAlgoMas se instancia como un sufijo de L sin los primeros Descartar elementos.
+% - Por último, se verifica append(R, _, RyAlgoMas), es decir, que R sea prefijo de RyAlgoMas. Esto es verdadero en una cantidad 
+%   finita de instanciaciones de DL, que ocurren cuando simultáneamente Descartar se instancia como una solución correcta y se devuelve. 
+%   Esta cantidad de soluciones será igual a las veces que R ocurre en L. Sin embargo, el predicado sigue buscando soluciones 
+%   (que serán siempre incorrectas) hasta que se cuelga.
 
 % 2- tablero(+K, -T)
 % Declaramos que T tiene 5 filas porque así se indica en la consigna. Luego usamos maplist para que cada elemento de T
