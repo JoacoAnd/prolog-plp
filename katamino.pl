@@ -5,20 +5,6 @@
 % su longitud. Luego separamos RyAlgoMas en R y otro término que no nos interesa. R tendrá longitud Tomar,
 % que son la cantidad de elementos que nos interesa quedarnos.
 sublista(Descartar, Tomar, L, R) :- length(DL, Descartar), length(R, Tomar), append(DL, RyAlgoMas, L), append(R, _, RyAlgoMas). 
-% 12- Reversibilidad
-% No es reversible ya que el predicado se cuelga.
-% - Cuando ejecutamos length(DL, Descartar), al no estar instanciado Descartar, DL se va a instanciar con todas las listas genericas 
-% de tamanio N tal que N >= 0, y tambien se instanciara en cada caso a Descartar como N. 
-% - Luego verifica length(R, Tomar). En caso de que no se cumpla, pasamos a la siguiente instanciacion de DL y Descartar.
-% Como R y Tomar estan instanciadas, esta consulta si falla lo hara para cualquier instanciacion de DL y Descartar. Prolog
-% intentara encontrar alguna que si lo cumpla (nunca llegara este caso) hasta que se cuelga.
-% - Si se cumple el caso anterior verifica ahora append(DL, RyAlgoMas, L). Aca pueden ocurrir dos casos:
-%   1. Si Descartar es mayor al tamanio de L entonces la consulta devuelve false, ya que no existe ninguna lista tal que 
-%   al concatenarla con DL resulte L. En ese caso seguira con las consultas infinitas ya explicadas y el programa se cuelga. 
-%   2. Descartar es menor o igual al tamanio de L, por lo que RyAlgoMas se instancia como un sufijo de L sin los primeros Descartar elementos.
-% - Por ultimo verifica append(R, _, RyAlgoMas), es decir, R es prefijo de RyAlgoMas. Esto es verdadero en una cantidad finita de instanciaciones de DL
-% que ocurre cuando simultaneamente Descartar se instancia como una solucion correcta y la devuelve. Esta cantidad de soluciones sera igual
-% a las veces que R ocurre en L. Sin embargo, el predicado sigue buscando soluciones (que seran siempre incorrectas) hasta que el predicado se cuelgue.
 
 % 12 - Reversibilidad
 % No es reversible ya que el predicado se cuelga.
@@ -63,7 +49,7 @@ elegirPieza([P | Piezas], P, Piezas).
 elegirPieza([_ | Piezas], P, Resto) :- elegirPieza(Piezas, P, Resto).
 
 generarLista(0, _, []).
-generarLista(K, Piezas, [P | PS]) :- K > 0, elegirPieza(Piezas, P, RestoPiezas), K1 is K - 1, generarLista(K1, RestoPiezas, PS).
+generarLista(K, Piezas, [P | PS]) :- K > 0, length(Piezas, LP), LP >= K, elegirPieza(Piezas, P, RestoPiezas), K1 is K - 1, generarLista(K1, RestoPiezas, PS).
 
 kPiezas(K, PS) :- nombrePiezas(Piezas), generarLista(K, Piezas, PS).
 
@@ -74,6 +60,7 @@ kPiezas(K, PS) :- nombrePiezas(Piezas), generarLista(K, Piezas, PS).
 seccionTablero(T, ALTO, ANCHO, (I, J), ST) :- I1 is I - 1, sublista(I1, ALTO, T, STAltura), J1 is J - 1, maplist(sublista(J1, ANCHO), STAltura, ST).
 
 % 7- ubicarPieza(+Tablero, +Identificador)
+% Dado un tablero y el identificador de una pieza, busca ubicar la pieza en el tablero instanciando ST como Pieza en seccionTablero
 
 ubicarPieza(Tablero, Identificador) :- 
     pieza(Identificador, Pieza), 
@@ -84,7 +71,7 @@ ubicarPieza(Tablero, Identificador) :-
 % 8- ubicarPiezas(+Tablero, +Poda, +Identificadores)
 
 % ubicarPiezaConPoda(+Tablero, +Poda, +Identificadores)
-% Ubica la pieza y verifica la poda.
+% Ubica la pieza y verifica la poda
 
 ubicarPiezaConPoda(Tablero, Poda, Identificadores) :-
     ubicarPieza(Tablero, Identificadores),
@@ -94,6 +81,7 @@ ubicarPiezas(Tablero, Poda, Identificadores) :-
     maplist(ubicarPiezaConPoda(Tablero, Poda), Identificadores).
 
 % 9- llenarTablero(+Poda, +Columnas, -Tablero)
+% Ubica las k Piezas en el tablero de k Columnas
 
 llenarTablero(Poda, Columnas, Tablero) :- tablero(Columnas, Tablero), kPiezas(Columnas, Piezas), ubicarPiezas(Tablero, Poda, Piezas).
 
@@ -102,10 +90,10 @@ cantSoluciones(Poda, Columnas, N) :-
 findall(T, llenarTablero(Poda, Columnas, T), TS),
 length(TS, N).
 
-% 36,023,793 inferences, 1.812 CPU in 1.870 seconds (97% CPU, 19875196 Lips)
+% 21,190,209 inferences, 0.812 CPU in 0.853 seconds (95% CPU, 26080257 Lips)
 % N = 28.
 
-% 1,426,464,108 inferences, 69.531 CPU in 70.363 seconds (99% CPU, 20515439 Lips)
+% 795,691,124 inferences, 28.859 CPU in 29.216 seconds (99% CPU, 27571322 Lips)
 % N = 200.
 
 % 11- Optimización
@@ -123,9 +111,9 @@ todosGruposLibresModulo5(T) :-
 poda(sinPoda, _).
 poda(podaMod5, T) :- todosGruposLibresModulo5(T).
 
-% 10,329,020 inferences, 0.891 CPU in 0.889 seconds (100% CPU, 11597496 Lips)
+% 10,403,821 inferences, 0.734 CPU in 0.741 seconds (99% CPU, 14166905 Lips)
 % N = 28.
 
-% 218,818,075 inferences, 8.813 CPU in 8.896 seconds (99% CPU, 24830420 Lips)
+% 218,861,156 inferences, 8.297 CPU in 8.463 seconds (98% CPU, 26378746 Lips)
 % N = 200.
 
